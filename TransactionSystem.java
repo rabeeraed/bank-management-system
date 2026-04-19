@@ -1,14 +1,27 @@
 public class TransactionSystem {
-    public void Deposit(Account user_acc, double amount) {
+    public static void Deposit(Account user_acc, double amount) {
         user_acc.Balance += amount;
+        System.out.println("Deposit successful.");
     }
 
-    public void Withdraw(Account user_acc, double amount) {
-        user_acc.Balance -= amount;
+    public static void Withdraw(Account user_acc, double amount) {
+        if (amount <= user_acc.Balance) {
+            user_acc.Balance -= amount;
+            System.out.println("Withdrawal Successful.");
+        }
+        else {
+            System.err.println("Withdrawal declined. Not enough balance.");
+        }
     }
 
-    public void Transfer(Account src_acc, Account destination_acc, double amount) {
-        src_acc.Balance -= amount;
-        destination_acc.Balance += amount;
+    public static void Transfer(Account src_acc, Account destination_acc, double amount) {
+        if (amount <= src_acc.Balance) {
+            src_acc.Balance -= amount;
+            destination_acc.Balance += amount;
+            System.out.println("Tranfsfer successful.");
+        }
+        else {
+            System.err.println("Transfer declined. Not enough balance.");
+        }
     }
 }
