@@ -1,0 +1,40 @@
+@startuml BankManagementSystem
+
+class Account {
+    - String Name
+    - String Address
+    - long PhoneNo
+    - long AccountNo
+    - String Password
+    - double Balance
+    + Account(String name, String address, long phone_num, long acc_num, String pass)
+    + void getInfo()
+}
+
+class Bank {
+    - String bankName
+    - Account[] Accounts
+    + Bank(String name)
+    - long generateAccountNo()
+    - String newPassword()
+    + void createAccount()
+    + Account Login()
+    + void logout()
+    + void viewAccountInfo()
+    + void updateAccountInfo()
+    + void changePassword()
+    + void deleteAccount()
+}
+
+class TransactionSystem {
+    + static void Deposit(Account user_acc)
+    + static void Withdraw(Account user_acc)
+    + static void Transfer(Account src_acc)
+}
+
+Bank "1" *-- "*" Account : manages
+TransactionSystem ..> Account : operates on
+TransactionSystem ..> Bank : accesses accounts for transfers
+Bank ..> TransactionSystem : uses for transactions
+
+@enduml
