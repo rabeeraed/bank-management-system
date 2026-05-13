@@ -3,12 +3,13 @@ public class Main {
         Bank bank = new Bank("Yarmouk Bank");
         bank.createAccount();
         bank.createAccount();
-        bank.login();
-        TransactionSystem.Deposit(bank.Login);
-        TransactionSystem.Withdraw(bank.Login);
-        TransactionSystem.Transfer(bank.Login);
+        Account loggedIn = bank.Login();
+        TransactionSystem.Deposit(loggedIn);
+        TransactionSystem.Withdraw(loggedIn);
+        TransactionSystem.Transfer(loggedIn);
         bank.viewAccountInfo();
         bank.updateAccountInfo();
         bank.logout();
+        Bank.closeScanner();
     }
 }

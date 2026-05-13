@@ -2,58 +2,153 @@ import java.util.*;
 
 public class Bank {
 
-    String bankName;
-    Account[] Accounts;
+    public static Account[] Accounts;
+    public static Scanner reader = new Scanner(System.in);
 
     public Bank(String name) {
-        this.bankName = name;
+        if (Accounts == null) {
+            Accounts = new Account[100];
+        }
     }
 
-    private generateAccountNo() {
+    private long readLongInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                long value = reader.nextLong();
+                reader.nextLine(); // consume the newline
+                return value;
+            } catch (InputMismatchException e) {
+                reader.nextLine(); // consume the invalid input
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+    public static long readLongInputOptional(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt + " (leave blank to skip): ");
+                String input = reader.nextLine();
+                if (input.isEmpty()) {
+                    return -1; // Return -1 to indicate "skip this field"
+                }
+                return Long.parseLong(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number or leave blank to skip.");
+            }
+        }
+    }
+
+    public static long readLongInputPublic(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                long value = reader.nextLong();
+                reader.nextLine(); // consume the newline
+                return value;
+            } catch (InputMismatchException e) {
+                reader.nextLine(); // consume the invalid input
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+    public static int readIntInputPublic(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                int value = reader.nextInt();
+                reader.nextLine(); // consume the newline
+                return value;
+            } catch (InputMismatchException e) {
+                reader.nextLine(); // consume the invalid input
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+    public static double readDoubleInputPublic(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                double value = reader.nextDouble();
+                reader.nextLine(); // consume the newline
+                return value;
+            } catch (InputMismatchException e) {
+                reader.nextLine(); // consume the invalid input
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+    private long generateAccountNo() {
         long num = 0;
         int num_Length = 8;
         for (int i = 0; i < num_Length; i++) {
-            num = num * 10 + (Math.random() % 10);
+            num = num * 10 + (long)(Math.random() * 10);
         }
         for (Account acc : Accounts) {
-            if (acc.AccountNo == num) {
+            if (acc != null && acc.AccountNo == num) {
                 return generateAccountNo();
             }
         }
         return num;
     }
 
-    private newPassword() {
+    private String newPassword() {
+        return newPasswordHelper();
+    }
+
+    private String newPasswordHelper() {
 
         String pass = "";
-        Scanner reader = new Scanner(System.in);
         System.out.print("Enter new password: ");
         pass = reader.nextLine();
 
         if ( pass.length() < 12 ) {
             System.out.println("Password must be at least 12 characters long.");
-            return newPassword();
+            return newPasswordHelper();
         }
 
+        boolean validPassword = false;
         for ( char c : pass.toCharArray() ) {
-            boolean validPassword = true;
             if ( c >= 'A' && c <= 'Z' ) {
-                validPassword = !validPassword;
+                validPassword = true;
+                break;
             }
-            else if ( c >= 'a' && c <= 'z' ) {
-                validPassword = !validPassword;
+        }
+        if (validPassword) {
+            validPassword = false;
+            for ( char c : pass.toCharArray() ) {
+                if ( c >= 'a' && c <= 'z' ) {
+                    validPassword = true;
+                    break;
+                }
             }
-            else if ( c >= '0' && c <= '9' ) {
-                validPassword = !validPassword;
+        }
+        if (validPassword) {
+            validPassword = false;
+            for ( char c : pass.toCharArray() ) {
+                if ( c >= '0' && c <= '9' ) {
+                    validPassword = true;
+                    break;
+                }
             }
-            else if ( c == '@' || c == '#' || c == '$' || c == '%' || c == '&' || c == '*' ) {
-                validPassword = !validPassword;
+        }
+        if (validPassword) {
+            validPassword = false;
+            for ( char c : pass.toCharArray() ) {
+                if ( c == '@' || c == '#' || c == '$' || c == '%' || c == '&' || c == '*' ) {
+                    validPassword = true;
+                    break;
+                }
             }
         }
 
         if ( !validPassword ) {
             System.out.println("Password must contain at least one uppercase letter, one lowercase letter, one digit and one special character.");
-            return newPassword();
+            return newPasswordHelper();
         }
 
 
@@ -65,38 +160,41 @@ public class Bank {
         }
         else {
             System.out.println("Passwords do not match. Try again.");
-            return newPassword();
+            return newPasswordHelper();
         }
     }
 
     public void createAccount() {
-        Scanner reader = new Scanner(System.in);
         String name, address;
         long phone_num;
         System.out.print("Enter name: ");
         name = reader.nextLine();
         System.out.print("Enter address: ");
         address = reader.nextLine();
-        System.out.print("Enter phone number: ");
-        phone_num = reader.nextLong();
+        phone_num = readLongInputPublic("Enter phone number: ");
         long acc_num = generateAccountNo();
         String pass = newPassword();
 
         Account new_acc = new Account(name, address, phone_num, acc_num, pass);
-        Accounts[Accounts.length] = new_acc;
+        for (int i = 0; i < Accounts.length; i++) {
+            if (Accounts[i] == null) {
+                Accounts[i] = new_acc;
+                break;
+            }
+        }
+        System.out.println("Account created successfully. Your account number is: " + acc_num);
     }
 
     public Account Login() {
-        Scanner reader = new Scanner(System.in);
         long acc_num;
         String pass;
-        System.out.print("Enter account number: ");
-        acc_num = reader.nextLong();
+        acc_num = readLongInput("Enter account number: ");
         System.out.print("Enter password: ");
         pass = reader.nextLine();
 
         for (Account acc : Accounts) {
-            if (acc.AccountNo == acc_num && acc.Password.equals(pass)) {
+            if (acc != null && acc.AccountNo == acc_num && acc.Password.equals(pass)) {
+                System.out.println("Login successful.");
                 return acc;
             }
         }
@@ -104,8 +202,7 @@ public class Bank {
         return Login();
     }
 
-    public logout() {
-        Login = null;
+    public void logout() {
         System.out.println("Logged out successfully.");
     }
 
@@ -116,19 +213,27 @@ public class Bank {
 
     public void updateAccountInfo() {
         Account acc = Login();
-        Scanner reader = new Scanner(System.in);
         String name, address;
         long phone_num;
-        System.out.print("Enter new name: ");
+        System.out.print("Enter new name (leave blank to skip): ");
         name = reader.nextLine();
-        System.out.print("Enter new address: ");
+        System.out.print("Enter new address (leave blank to skip): ");
         address = reader.nextLine();
-        System.out.print("Enter new phone number: ");
-        phone_num = reader.nextLong();
+        phone_num = readLongInputOptional("Enter new phone number");
 
-        acc.Name = name;
-        acc.Address = address;
-        acc.PhoneNo = phone_num;
+        if (!name.isEmpty()) {
+            acc.Name = name;
+            System.out.println("Name updated.");
+        }
+        if (!address.isEmpty()) {
+            acc.Address = address;
+            System.out.println("Address updated.");
+        }
+        if (phone_num != -1) {
+            acc.PhoneNo = phone_num;
+            System.out.println("Phone number updated.");
+        }
+        System.out.println("Account info update completed.");
     }
 
     public void changePassword() {
@@ -136,10 +241,20 @@ public class Bank {
         String new_pass = newPassword();
         acc.Password = new_pass;
     }
+    
+    public static void closeScanner() {
+        reader.close();
+    }
 
     public void deleteAccount() {
         Account acc = Login();
-        Accounts[acc.AccountNo] = null;
+        for (int i = 0; i < Accounts.length; i++) {
+            if (Accounts[i] == acc) {
+                Accounts[i] = null;
+                System.out.println("Account deleted successfully.");
+                break;
+            }
+        }
     }
 
 

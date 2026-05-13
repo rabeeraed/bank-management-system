@@ -21,4 +21,11 @@ public class Account {
         this.Balance = 0;
     }
 
+    public void getInfo() {
+        System.out.println("Name: " + this.Name);
+        System.out.println("Address: " + this.Address);
+        System.out.println("Phone number: " + this.PhoneNo);
+        System.out.println("Account number: " + this.AccountNo);
+        System.out.println("Balance: " + this.Balance);
+    }
 }
